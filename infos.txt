@@ -1,0 +1,7 @@
+Chargé de TD: Mohamed OUMAZIZ  - moumaziz@labri.fr
+
+Compile from cmd : javac -d <dest dir> <source file path>
+Run from cmd : java -cp . <packagename>
+
+boolean eg1 = (town1 == town2); faux
+boolean eg2 = town1.equals(town2); vrai

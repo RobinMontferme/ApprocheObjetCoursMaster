@@ -3,9 +3,9 @@ package fr.ubordeaux.ao;
 import java.util.Objects;
 
 public class Address {
-    private int number;
-    private String street;
-    private Town town;
+    private int number; // immutable
+    private String street; // immutable
+    private Town town;// immutable
 
     public Address(int number, String street, Town town) {
         this.number = number;
@@ -13,20 +13,20 @@ public class Address {
         this.town = town;
     }
 
-    public int getNumber() {
+    public int getNumber() { //dépend
         return number;
     }
 
-    public String getStreet() {
+    public String getStreet() { //dépend
         return street;
     }
 
-    public Town getTown() {
+    public Town getTown() { //dépend
         return town;
     }
 
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(Object other) { //dépend
         if (! (other instanceof Address)) return false;
         Address otherAddress = (Address) other;
         boolean sameNumber = this.number == otherAddress.getNumber();
@@ -36,12 +36,12 @@ public class Address {
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode() {//dépend
         return Objects.hash(number, street, town);
     }
 
     @Override
-    public String toString() {
+    public String toString() { //dépend
         return number+" "+street+" "+town.toString();
     }
 

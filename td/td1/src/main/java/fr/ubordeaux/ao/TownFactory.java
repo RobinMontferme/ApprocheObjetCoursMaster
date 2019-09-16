@@ -6,8 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class TownFactory {
-    private BufferedReader br;
-    private final String file = "./villes_france.csv";
+    private BufferedReader br; //immutable
+    private final String file = "./villes_france.csv"; //immutable
 
     public TownFactory() {
         try {
@@ -16,7 +16,7 @@ public class TownFactory {
 			System.out.println("le fichier n'est pas accessible !");
 		}
     }
-    public Town getNextTown() {
+    public Town getNextTown() {//dépend
         String line;
 		try {
             line = br.readLine();
@@ -29,7 +29,7 @@ public class TownFactory {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) {//ne modifie pas
         TownFactory tf = new TownFactory();
         for (int i=0 ; i<36700; i++) {
             System.out.println(tf.getNextTown().toString());
