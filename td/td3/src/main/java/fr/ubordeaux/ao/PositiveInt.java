@@ -1,9 +1,9 @@
-package fr.ubordeaux.ao;
+package main.java.fr.ubordeaux.ao;
 
 public class PositiveInt{
     private int value;
     public PositiveInt(int value) throws IllegalArgumentException{
-        if(value <=0)
+        if(value <0)
         {
             throw new IllegalArgumentException("Exepected integer value got "+value);
         }
