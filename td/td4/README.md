@@ -2,33 +2,38 @@
 
 Ce TD a pour objectif de :
 
-* Coder une application en suivant l'achitecture hexagonale
-* Rendre indépendant l'insfrastructure
+* Coder un test Unitaire
+* Réaliser les corrections proposées par un linter
 
 ## Consignes
 
 Les modifications que vous devez apporter au code doivent être compilées (directement en utilisant javac ou gradle)
 
-## Catalogue de Références, et stock de produits
+## Test Unitaire
 
-Dans ce TD vous allez développer le catalogue de références d'un magasin de eCommerce.
+Le code fourni représente la gestion d'un catalogue. L'interface **Catalog** représente le catalogue qui contient les références. La classe **Reference** représente les références contenues dans le catalogue.
+La classe **CatalogImpl** implémente l'interface **Catalog** et permet de stocker le catalog en mémoire.
 
-## Couche domain
 
-La couche model contient les concepts métiers suivants:
+Vous allez changer l'interface Catalog et sa classe d'implantation CatalogImpl pour faire en sorte qu'un catalogue respecte les besoins suivants:
 
-* Reference : Une référence produit (id, nom, description, prix). On considère que le prix d'une référence ne change pas. C'est le prix de base. Plusieurs promotions pourront être faites lors de la commande mais le prix ne change pas.
-* Catalog : le catalogue des références
+* Un catalogue a un nom (composé uniquement de lettres minuscules, minimum 3 lettres maximum 10 lettres)
+* Un catalogue peut avoir plusieurs sous-catalogues
+* Les noms des catalogues frères (sous-catalogues d'un même catalogue) doivent avoir des noms différents
+* On peut obtenir la liste des références contenues directement par un catalogue (getOwnReferences) ou avoir les références contenues par un catalogue et toute sa descendance (getAllReferences)  
+  
+Tester Unitairement la classe Catalogue en veillant à ce que les besoins soient bien respectés.
 
-## Couche infrastructure
+## Linter
 
-Cette couche se fera en mémoire. Elle contient donc les classes d'infrastructure permettant de gérer en mémoire vive le catalogue et le stock.
+Exécuter le linter Checkstyle
 
-## Couche UI
+    gradle checkstyleMain
 
-Cette couche se fera en ligne de commande. Elle proposera une interaction simple permettant à un utilisateur d'intéragir avec l'application (créer une référence, l'ajouter dans le catalogue, la supprimer du catalogue).
+Réalisez les recommandations qu'il vous propose pour la classe **Reference.java**. Pour lire les recommandations, il faut aller dans le répertoire **build/reports**
 
-## Couche Domain
+Exécuter le linter SpotBugs
 
-Si vous avez le temps, vous pouvez proposer un service métier : le moteur de recherche.
+    gradle spotbugsMain
 
+Réalisez les recommandations **Correctness Warnings** qu'il vous propose. Pour lire les recommandations, il faut aller dans le répertoire **build/reports**
