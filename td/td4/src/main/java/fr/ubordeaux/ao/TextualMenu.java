@@ -12,20 +12,21 @@ public class TextualMenu {
     private PrintWriter out;
     private Catalog catalog;
 
-    protected TextualMenu(BufferedReader in , PrintWriter out) {
+    protected TextualMenu(BufferedReader in , PrintWriter out,String collectionName) {
         this.in = in;
         this.out = out;
-        initCollection();
+        System.out.println(collectionName);
+        initCollection(collectionName);
     }
 
-    protected TextualMenu(InputStream in, PrintStream out) {
+    protected TextualMenu(InputStream in, PrintStream out, String collectionName) {
         this.in = new BufferedReader(new InputStreamReader(in));
         this.out = new PrintWriter(out, true);
-        initCollection();
+        initCollection(collectionName);
     }
 
-    private void initCollection() {
-        catalog = new CatalogImpl();
+    private void initCollection(String collectionName) {
+        catalog = new CatalogImpl(collectionName);
     }
 
     protected void handleUserInstructions() throws IOException {
