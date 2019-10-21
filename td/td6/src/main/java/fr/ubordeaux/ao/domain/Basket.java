@@ -19,6 +19,9 @@ public class Basket {
     public String getId() {
         return this.id;
     }
+    public boolean isValidated() {
+        return validedBasket;
+    }
     public int getTotalPrice() {
         int totalPrice = 0;
         for (CommandLine c : commandLines.values()) {

@@ -31,15 +31,16 @@ public class Main {
         System.out.println(b.getTotalPrice());
         // b.deleteRefFromBasket(rM);
         System.out.println(b.getTotalPrice());
-        // b.validateBasket();
+        b.validateBasket();
         b.addRefAndQty(rP, 140);
         System.out.println(b.getTotalPrice());
 
-        BasketRepository rep = new BasketJsonRepository();
+        // BasketRepository rep = new BasketJsonRepository();
+        BasketRepository rep = new BasketInMemoryRepository();
 
         rep.save(b);
-        Basket dup = rep.load("s");
+        Basket dup = rep.load("Super Panier");
         System.out.println(dup.getTotalPrice());
-
+        System.out.println("basket is validated: "+dup.isValidated());
     }
 }
