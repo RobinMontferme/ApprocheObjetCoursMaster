@@ -39,8 +39,11 @@ public class Main {
         BasketRepository rep = new BasketInMemoryRepository();
 
         rep.save(b);
-        Basket dup = rep.load("Super Panier");
-        System.out.println(dup.getTotalPrice());
-        System.out.println("basket is validated: "+dup.isValidated());
+        
+        BasketDAO dup = rep.load("Super Panier");
+        Basket newB = new Basket(dup);
+        
+        System.out.println(newB.getTotalPrice());
+        System.out.println("basket is validated: "+newB.isValidated());
     }
 }

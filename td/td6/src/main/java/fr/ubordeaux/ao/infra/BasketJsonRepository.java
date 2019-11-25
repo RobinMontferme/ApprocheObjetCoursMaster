@@ -1,38 +1,49 @@
 package fr.ubordeaux.ao.infra;
 
 import fr.ubordeaux.ao.domain.*;
-
+import java.util.List;
+import java.util.ArrayList;
 import org.json.*;
 import java.io.*;
 
 public class BasketJsonRepository implements BasketRepository {
-
+    public final String ID_KEY="id";
+    public final String VALIDATED_KEY="validated";
+    public final String CMD_KEY="cmdLines";
+    public final String REFERENCE_KEY="reference";
+    public final String QTY_KEY="qty";
+    public final String REF_KEY="ref";
+    public final String NAME_KEY="name";
+    public final String DESC_KEY="desc";
+    public final String PRICE_KEY="price";
+    public final String CONTENT_KEY="content";
     private String jsonPath = "jsonRep.json";
 
     public void save(Basket b) {
+        BasketDAO basketToSave = b.serialize();
         JSONArray rep = new JSONArray();
         JSONObject basket = new JSONObject();
         JSONObject content = new JSONObject();
         JSONArray cmdLines = new JSONArray();
 
-        for (CommandLine c : b.getCommandLines().values()) {
+        for (CommandLineDAO c : basketToSave.cmd) {
             JSONObject singleCmdLine = new JSONObject();
 
             JSONObject singleRef = new JSONObject();
-            singleRef.put("ref", c.getReference().ref.value);
-            singleRef.put("name", c.getReference().name.value);
-            singleRef.put("desc", c.getReference().desc.value);
-            singleRef.put("price", c.getReference().price);
+            singleRef.put(REF_KEY, c.ref);
+            singleRef.put(NAME_KEY, c.name);
+            singleRef.put(DESC_KEY, c.desc);
+            singleRef.put(PRICE_KEY, c.price);
 
-            singleCmdLine.put("reference", singleRef);
-            singleCmdLine.put("quantity", c.getQuantity());
+            singleCmdLine.put(REFERENCE_KEY, singleRef);
+            singleCmdLine.put(QTY_KEY, c.qty);
 
             cmdLines.put(singleCmdLine);
         }
-        content.put("cmdLines", cmdLines);
-        content.put("validated", b.isValidated());
-        basket.put("id", b.getId());
-        basket.put("content", content);
+        content.put(CMD_KEY, cmdLines);
+        content.put(VALIDATED_KEY, basketToSave.validated);
+        basket.put(ID_KEY, basketToSave.id);
+        basket.put(CONTENT_KEY, content);
         rep.put(basket);
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(jsonPath));
@@ -42,8 +53,9 @@ public class BasketJsonRepository implements BasketRepository {
             e.printStackTrace();
         }
     }
-
-    public Basket load(String id) {
+    public void update(Basket b) {}
+    public BasketDAO load(String id) {
+        //Reading JSON
         StringBuilder jsonContent = new StringBuilder();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(jsonPath));
@@ -54,47 +66,48 @@ public class BasketJsonRepository implements BasketRepository {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //searching for right basket basket
         String jsonString = jsonContent.toString();
         JSONArray rep = new JSONArray(jsonString);
-        JSONObject basketObj = new JSONObject();
+        JSONObject basketJSON = new JSONObject();
         boolean foundBasket = false;
         int index = 0;
         while (!foundBasket && index < rep.length()) {
             JSONObject singleBasket = rep.getJSONObject(index);
-            String singleId = singleBasket.getString("id");
+            String singleId = singleBasket.getString(ID_KEY);
             System.out.println(singleId);
             if (singleId.equals(id)) {
-                basketObj = singleBasket;
+                basketJSON = singleBasket;
                 foundBasket = true;
             } else {
                 index++;
             }
 
         }
-        JSONObject obj = basketObj.getJSONObject("content");
+        //data extracting
+        String idFromJSON = basketJSON.getString(ID_KEY);
+        JSONObject contentJSON = basketJSON.getJSONObject(CONTENT_KEY);
+        
+        boolean validationFromJSON = contentJSON.getBoolean(VALIDATED_KEY);
+        JSONArray cmdLinesJSON = contentJSON.getJSONArray(CMD_KEY);
 
-        Basket loadedBasket = new Basket(basketObj.getString("id"));
+        List<CommandLineDAO> cmdFromJSON = new ArrayList<CommandLineDAO>();
+        for (int i = 0; i < cmdLinesJSON.length(); i++) {
+            JSONObject singleCmdJSON = cmdLinesJSON.getJSONObject(i);
+            
+            int qtyFromJSON = singleCmdJSON.getInt(QTY_KEY);
+            
+            JSONObject referenceJSON = singleCmdJSON.getJSONObject(REFERENCE_KEY);
+            int priceFromJSON = referenceJSON.getInt(PRICE_KEY);
+            
+            String refFromJSON = referenceJSON.getString(REF_KEY);
+            String nameFromJSON = referenceJSON.getString(NAME_KEY);
+            String descFromJSON = referenceJSON.getString(DESC_KEY);
 
-        JSONArray loadedCmdLines = obj.getJSONArray("cmdLines");
-        for (int i = 0; i < loadedCmdLines.length(); i++) {
-            JSONObject singleLoadedCmdLine = loadedCmdLines.getJSONObject(i);
-
-            int tmpQuantity = singleLoadedCmdLine.getInt("quantity");
-
-            JSONObject loadedReference = singleLoadedCmdLine.getJSONObject("reference");
-
-            RefString tmpRef = new RefString(loadedReference.getString("ref"));
-            NameString tmpNS = new NameString(loadedReference.getString("name"));
-            DescriptionString tmpDS = new DescriptionString(loadedReference.getString("desc"));
-            int tmpPrice = loadedReference.getInt("price");
-            Reference tmpReference = new Reference(tmpRef, tmpNS, tmpDS, tmpPrice);
-
-            loadedBasket.addRefAndQty(tmpReference, tmpQuantity);
+            cmdFromJSON.add(new CommandLineDAO(qtyFromJSON, priceFromJSON, refFromJSON, nameFromJSON, descFromJSON));
         }
-        boolean basketValidation = obj.getBoolean("validated");
-        if (basketValidation) {
-            loadedBasket.validateBasket();
-        }
+       
+        BasketDAO loadedBasket = new BasketDAO(idFromJSON,validationFromJSON,cmdFromJSON);
         return loadedBasket;
 
     }
