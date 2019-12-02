@@ -11,12 +11,17 @@ import fr.ubordeaux.ao.domain.CommandLine;
  * Basket is an Aggregate
  */
 public class Basket {
+    private static int autoId = 0;
     private Map<Reference, CommandLine> commandLines = new HashMap<Reference, CommandLine>();
     private boolean validedBasket = false;
     private String id;
 
     public Basket(String id) {
         this.id = id;
+    }
+    public Basket() {
+        this.id = Integer.toString(autoId);
+        autoId++;
     }
 
       public Basket(BasketDAO bDAO) {
@@ -70,6 +75,7 @@ public class Basket {
         }
     }
 
+
     public void deleteRefFromBasket(Reference ref) {
         if (!validedBasket) {
             System.out.println("Basket isn't validated");
@@ -82,9 +88,13 @@ public class Basket {
                     commandLines.remove(ref);
                     System.out.println("No More Left");
                 }
+            }else{
+                System.out.println("Nothing found");
             }
-        }
+        }else{
+
         System.out.println("Basket was validated");
+        }
     }
 
     public Map<Reference, CommandLine> getCommandLines() {
@@ -92,7 +102,7 @@ public class Basket {
         for (CommandLine c : commandLines.values()) {
             copiedCmdLines.put(c.getReference(), c.clone());
         }
-        return commandLines;
+        return copiedCmdLines;
     }
 
     public void validateBasket() {
